@@ -1,0 +1,50 @@
+﻿@using P1.SeccIPortfolioApp__.Client.Models;
+@page "/"
+@inject HttpClient Http
+
+<h3>Portfolio List</h3>
+
+@if (portfolios == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Portfolio Id</th>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in portfolios)
+            {
+                <tr>
+                    <td>@p.PortfolioId</td>
+                    <td>@p.Name</td>
+                    <td>
+                        <a class="btn btn-primary"
+                           href="/portfolio/@p.PortfolioId">
+                            View
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code
+{
+    private List<Portfolio>? portfolios;
+
+    protected override async Task OnInitializedAsync()
+    {
+        portfolios = await Http.GetFromJsonAsync<List<Portfolio>>
+        (
+            "https://localhost:7051/api/portfolio"
+        );
+    }
+}
