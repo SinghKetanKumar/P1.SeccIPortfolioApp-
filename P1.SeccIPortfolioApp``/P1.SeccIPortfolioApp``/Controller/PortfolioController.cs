@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using P1.SeccIPortfolioApp__.Services;
 
 namespace P1.SeccIPortfolioApp__.Controller
 {
@@ -6,27 +7,25 @@ namespace P1.SeccIPortfolioApp__.Controller
     [Route("api/[controller]")]
     public class PortfolioController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Get()
+        private readonly IPortfolioService _service;
+        public PortfolioController(IPortfolioService service)
         {
-            return Ok(new List<object>
-            {
-                new
-                {
-                    PortfolioId = 1001,
-                    Name = "Demo Portfolio"
-                }
-            });
+            _service = service;
+        }
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            var portfolios = await _service.GetPortfoliosAsync();
+            return Ok(portfolios);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            return Ok(new
-            {
-                PortfolioId = id,
-                Name = "Demo Portfolio"
-            });
+            var portfolio = await _service.GetPortfolioByIdAsync(id);
+            if (portfolio == null)
+                return NotFound();
+            return Ok(portfolio);
         }
     }
 }

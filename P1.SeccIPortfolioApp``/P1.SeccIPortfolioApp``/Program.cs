@@ -12,16 +12,7 @@ builder.Services.AddSwaggerGen();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
-builder.Services.AddScoped(sp =>
-{
-    var navigationManager =
-        sp.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>();
-
-    return new HttpClient
-    {
-        BaseAddress = new Uri(navigationManager.BaseUri)
-    };
-});
+builder.Services.AddScoped<IPortfolioService,PortfolioService>();
 builder.Services.AddHttpClient();
 var app = builder.Build();
 app.MapControllers();
