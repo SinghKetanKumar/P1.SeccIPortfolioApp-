@@ -8,24 +8,59 @@ namespace P1.SeccIPortfolioApp__.Controller
     public class PortfolioController : ControllerBase
     {
         private readonly IPortfolioService _service;
+
         public PortfolioController(IPortfolioService service)
         {
             _service = service;
         }
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var portfolios = await _service.GetPortfoliosAsync();
-            return Ok(portfolios);
+            try
+            {
+                var portfolios =
+                    await _service.GetPortfoliosAsync();
+
+                return Ok(portfolios);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new
+                    {
+                        Message = "An error occurred while retrieving portfolios.",
+                        Error = ex.Message
+                    });
+            }
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(string id)
         {
-            var portfolio = await _service.GetPortfolioByIdAsync(id);
-            if (portfolio == null)
-                return NotFound();
-            return Ok(portfolio);
+            try
+            {
+                var portfolio =
+                    await _service.GetPortfolioByIdAsync(id);
+
+                if (portfolio == null)
+                {
+                    return NotFound($"Portfolio '{id}' not found.");
+                }
+
+                return Ok(portfolio);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new
+                    {
+                        Message = "An error occurred while retrieving the portfolio.",
+                        Error = ex.Message
+                    });
+            }
         }
     }
 }

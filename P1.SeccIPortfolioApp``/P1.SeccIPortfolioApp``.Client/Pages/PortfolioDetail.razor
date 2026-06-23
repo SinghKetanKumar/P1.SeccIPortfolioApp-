@@ -1,9 +1,15 @@
-﻿@page "/portfolio/{PortfolioId:int}"
+﻿@page "/portfolio/{PortfolioId}"
+@using P1.SeccIPortfolioApp__.Client.Models
 @inject HttpClient Http
 @inject NavigationManager Navigation
 
 <h3>Portfolio Details</h3>
-
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">
+        Error: @errorMessage
+    </div>
+}
 @if (portfolio == null)
 {
     <p>Loading...</p>
@@ -12,15 +18,18 @@ else
 {
     <hr />
 
-    <p>
-        <strong>Portfolio Id:</strong>
-        @portfolio.PortfolioId
-    </p>
-
-    <p>
-        <strong>Name:</strong>
-        @portfolio.Name
-    </p>
+    <p><strong>Portfolio Id:</strong> @portfolio.Id</p>
+    <p><strong>Name:</strong> @portfolio.Name</p>
+    <p><strong>Status:</strong> @portfolio.Status</p>
+    <p><strong>Currency:</strong> @portfolio.Currency</p>
+    <p><strong>Accounts:</strong> @portfolio.Accounts</p>
+    <p><strong>Current Value:</strong> @portfolio.CurrentValue</p>
+    <p><strong>Growth:</strong> @portfolio.Growth</p>
+    <p><strong>Firm Id:</strong> @portfolio.FirmId</p>
+    <p><strong>Uninvested Cash:</strong> @portfolio.UninvestedCash</p>
+    <p><strong>Growth %:</strong> @portfolio.GrowthPercent</p>
+    <p><strong>Adjusted Growth:</strong> @portfolio.AdjustedGrowth</p>
+    <p><strong>Adjusted Growth %:</strong> @portfolio.AdjustedGrowthPercent</p>
 
     <button class="btn btn-secondary"
             @onclick="GoBack">
@@ -31,16 +40,25 @@ else
 @code
 {
     [Parameter]
-    public int PortfolioId { get; set; }
+    public string PortfolioId { get; set; } = string.Empty;
 
     private Portfolio? portfolio;
 
+    private string? errorMessage;
+
     protected override async Task OnParametersSetAsync()
     {
-        portfolio = await Http.GetFromJsonAsync<Portfolio>
-        (
-            $"https://localhost:7051/api/portfolio/{PortfolioId}"
-        );
+        try
+        {
+            portfolio = await Http.GetFromJsonAsync<Portfolio>
+            (
+                $"api/portfolio/{PortfolioId}"
+            );
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
     }
 
     private void GoBack()

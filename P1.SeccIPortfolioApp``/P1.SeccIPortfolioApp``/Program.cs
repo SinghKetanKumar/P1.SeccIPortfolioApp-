@@ -1,7 +1,8 @@
 using P1.SeccIPortfolioApp__.Client.Pages;
 using P1.SeccIPortfolioApp__.Components;
 using P1.SeccIPortfolioApp__.Services;
-
+using P1.SeccIPortfolioApp__.Models;
+using Microsoft.Extensions.Options;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,8 +13,9 @@ builder.Services.AddSwaggerGen();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
-builder.Services.AddScoped<IPortfolioService,PortfolioService>();
-builder.Services.AddHttpClient();
+builder.Services.Configure<SecclSettings>(
+    builder.Configuration.GetSection("SecclApi"));
+builder.Services.AddHttpClient<IPortfolioService, PortfolioService>();
 var app = builder.Build();
 app.MapControllers();
 // Configure the HTTP request pipeline.

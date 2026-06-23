@@ -13,8 +13,9 @@ else
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Portfolio Id</th>
+                <th>Client Id</th>
                 <th>Name</th>
+                <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -22,11 +23,12 @@ else
             @foreach (var p in portfolios)
             {
                 <tr>
-                    <td>@p.PortfolioId</td>
+                    <td>@p.Id</td>
                     <td>@p.Name</td>
+                    <td>@p.Status</td>
                     <td>
                         <a class="btn btn-primary"
-                           href="/portfolio/@p.PortfolioId">
+                           href="/portfolio/@p.Id">
                             View
                         </a>
                     </td>
@@ -39,12 +41,26 @@ else
 @code
 {
     private List<Portfolio>? portfolios;
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        portfolios = await Http.GetFromJsonAsync<List<Portfolio>>
-        (
-            "https://localhost:7051/api/portfolio"
-        );
+        try
+        {
+            portfolios = await Http.GetFromJsonAsync<List<Portfolio>>
+            (
+                "api/portfolio"
+            );
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
     }
+}
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">
+        Error: @errorMessage
+    </div>
 }
