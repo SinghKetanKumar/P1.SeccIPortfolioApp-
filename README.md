@@ -149,6 +149,21 @@ Example:
 
 Actual credentials should not be committed to source control.
 
+## SECCL Configuration
+
+Update appsettings.json with the SECCL staging credentials provided in the technical test:
+
+{
+  "SecclApi": {
+    "BaseUrl": "https://pfolio-api-staging.seccl.tech",
+    "FirmId": "<YOUR_FIRM_ID>",
+    "Id": "<YOUR_USER_ID>",
+    "Password": "<YOUR_PASSWORD>"
+  }
+}
+
+Credentials are intentionally excluded from source control in accordance with the test requirements.
+
 ---
 
 ## Running the Application
